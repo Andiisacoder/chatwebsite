@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .chat-container { width: 90%; max-width: 600px; margin: 50px auto; padding: 20px; background: white; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
+        #messages { border: 1px solid #ddd; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 20px; }
+        #message-form { display: flex; }
+        #message-form input { flex: 1; padding: 10px; }
+        #message-form button { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>Public Chat Room</h2>
+        <div id="messages"></div>
+        <form id="message-form">
+            <input type="text" id="message-input" placeholder="Type a message..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script>
+        // Your Firebase Config
+        var firebaseConfig = {
+            apiKey: "AIzaSyCZYxhAnF9zGLnsd6YXm1dKnoNzEMQdwqY",
+
+authDomain: "chat-479f5.firebaseapp.com",
+
+projectId: "chat-479f5",
+
+storageBucket: "chat-479f5.appspot.com",
+
+messagingSenderId: "735862288536",
+
+appId: "1:735862288536:web:aa6c4e0c590a50321760ed",
+
+measurementId: "G-L87ZM49MFR"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        const db = firebase.database().ref("messages");
+
+        document.getElementById('message-form').addEventListener('submit', sendMessage);
+
+        db.on("child_added", function(snapshot) {
+            const message = snapshot.val();
+            displayMessage(message.text);
+        });
+
+        function sendMessage(e) {
+            e.preventDefault();
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            db.push().set({ text: message });
+            messageInput.value = "";
+        }
+
+        function displayMessage(message) {
+            const messageContainer = document.getElementById('messages');
+            const newMessage = document.createElement('div');
+            newMessage.textContent = message;
+            messageContainer.appendChild(newMessage);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
